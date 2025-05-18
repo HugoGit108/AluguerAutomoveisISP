@@ -9,6 +9,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
-        <exec.mainClass>com.isp.aluguerautomoveisisp.AluguerAutomoveisISP</exec.mainClass>
+        <exec.mainClass>com.isp.aluguerautomoveisisp.Main</exec.mainClass>
     </properties>
 </project>

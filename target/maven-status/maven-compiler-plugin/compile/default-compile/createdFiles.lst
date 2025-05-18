@@ -1,1 +1,3 @@
-com\isp\aluguerautomoveisisp\AluguerAutomoveisISP.class
+com\isp\aluguerautomoveisisp\Main.class
+com\rentcar\gestaoaluguer\Automovel.class
+com\rentcar\gestaoaluguer\Cliente.class
