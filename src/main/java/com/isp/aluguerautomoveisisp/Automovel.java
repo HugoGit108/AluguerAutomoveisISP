@@ -1,4 +1,4 @@
-package com.rentcar.gestaoaluguer;
+package com.isp.aluguerautomoveisisp;
 
 public class Automovel {
     private String marca;

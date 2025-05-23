@@ -1,8 +1,8 @@
 package com.isp.aluguerautomoveisisp;
 
-import com.rentcar.gestaoaluguer.Automovel;
-import com.rentcar.gestaoaluguer.Cliente;
-import com.rentcar.gestaoaluguer.Aluguer;
+import com.isp.aluguerautomoveisisp.Automovel;
+import com.isp.aluguerautomoveisisp.Cliente;
+import com.isp.aluguerautomoveisisp.Aluguer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,48 +16,27 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int opcao;
-
+        int opt;
+        
         do {
             System.out.println("===== Gestão de Aluguer =====");
-            System.out.println("1. Inserir Automóvel");
-            System.out.println("2. Inserir Cliente");
-            System.out.println("3. Listar Automóveis");
-            System.out.println("4. Listar Clientes");
-            System.out.println("5. Alterar Automóvel");
-            System.out.println("6. Eliminar Automóvel");
-            System.out.println("7. Alterar Cliente");
-            System.out.println("8. Eliminar Cliente");
-
+            System.out.println("1. Menu Automóveis");
+            System.out.println("2. Menu Clientes");
+            System.out.println("3. Menu Alugueres");
             System.out.println("0. Sair");
             System.out.print("Escolha uma opção: ");
-            opcao = scanner.nextInt();
+            opt = scanner.nextInt();
             scanner.nextLine(); // limpar buffer
 
-            switch (opcao) {
+            switch (opt) {
                 case 1:
-                    inserirAutomovel(scanner);
+                    menuAutomoveis(scanner);
                     break;
                 case 2:
-                    inserirCliente(scanner);
+                    menuClientes(scanner);
                     break;
                 case 3:
-                    listarAutomoveis();
-                    break;
-                case 4:
-                    listarClientes();
-                    break;
-                case 5:
-                    alterarAutomovel(scanner);
-                    break;
-                case 6:
-                    eliminarAutomovel(scanner);
-                    break;
-                case 7:
-                    alterarCliente(scanner);
-                    break;
-                case 8:
-                    eliminarCliente(scanner);
+                    menuAlugueres(scanner);
                     break;
                 case 0:
                     System.out.println("A sair...");
@@ -65,8 +44,70 @@ public class Main {
                 default:
                     System.out.println("Opção inválida!");
             }
+        } while (opt != 0);
+
+    }
+    
+    private static void menuAutomoveis(Scanner scanner) {
+        int opcao;
+        do {
+            System.out.println("\n--- Menu Automóveis ---");
+            System.out.println("1. Inserir Automóvel");
+            System.out.println("2. Listar Automóveis");
+            System.out.println("3. Alterar Automóvel");
+            System.out.println("4. Eliminar Automóvel");
+            System.out.println("0. Voltar");
+            System.out.print("Escolha uma opção: ");
+            opcao = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcao) {
+                case 1: inserirAutomovel(scanner); break;
+                case 2: listarAutomoveis(); break;
+                case 3: alterarAutomovel(scanner); break;
+                case 4: eliminarAutomovel(scanner); break;
+                case 0: break;
+                default: System.out.println("Opção inválida!");
+            }
         } while (opcao != 0);
     }
+
+    
+    private static void menuClientes(Scanner scanner) {
+        int opcao;
+        do {
+            System.out.println("\n--- Menu Clientes ---");
+            System.out.println("1. Inserir Cliente");
+            System.out.println("2. Listar Clientes");
+            System.out.println("3. Alterar Cliente");
+            System.out.println("4. Eliminar Cliente");
+            System.out.println("0. Voltar");
+            System.out.print("Escolha uma opção: ");
+            opcao = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcao) {
+                case 1: inserirCliente(scanner); break;
+                case 2: listarClientes(); break;
+                case 3: alterarCliente(scanner); break;
+                case 4: eliminarCliente(scanner); break;
+                case 0: break;
+                default: System.out.println("Opção inválida!");
+            }
+        } while (opcao != 0);
+    }
+
+    private static void menuAlugueres(Scanner scanner) {
+        int opcao;
+        do {
+            System.out.println("\n--- Menu Aluguer ---");
+            opcao = scanner.nextInt();
+            scanner.nextLine();
+
+           
+        } while (opcao != 0);
+    }
+
 
     private static void inserirAutomovel(Scanner scanner) {
         System.out.print("Matrícula: ");

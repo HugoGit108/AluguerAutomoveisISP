@@ -1,0 +1,21 @@
+trabalho prático.
+a mesma pessoa pode alugar mais que um carro, ter o cuidado para o carro não estar já ocupado
+quando a pessoa deixa o carro, dar um delay de 1h/2hrs para a limpeza do carro / tratar os carros por dia e não por hora
+fazer uma interface para ser mais acessível
+matricula: numero letra numero
+caução , verificação do carro apos a entrega e se tiver sido danificado não atribuir a caução 
+Verificar se a matricula já existe ou não, colocando como primeiro no inserir(para ter a validação, mesma coisa com o cliente , pedir primeiro o NIF ou o BI
+matricula: dígitos
+Ano de aquisição: não pode ultrapassar o ano de 2025
+CC: tem de ter 9 digitos
+NIF: 9 dígitos
+Carta de condução: P- 7 Digitos
+inserir cliente rever cc + carta - validar por carta de condução 
+preco fixo de aluguer em todos os carros 
+
+como começar
+fazer primeiro a base do trabalho, inserir, eliminar e pesquisar e depois começar com os pequenos detalhes do trabalho(o que está em cima)
+
+ for (int i = 9; i <= 0; i--){
+             System.out.println(i);
+        }

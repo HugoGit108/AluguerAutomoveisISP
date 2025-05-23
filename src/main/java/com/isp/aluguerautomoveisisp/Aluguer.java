@@ -1,8 +1,4 @@
-package com.rentcar.gestaoaluguer;
-
-import com.rentcar.gestaoaluguer.Automovel;
-import com.rentcar.gestaoaluguer.Cliente;
-import com.rentcar.gestaoaluguer.Aluguer;
+package com.isp.aluguerautomoveisisp;
 
 import java.time.LocalDate;
 
