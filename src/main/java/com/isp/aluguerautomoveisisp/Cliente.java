@@ -1,16 +1,34 @@
-package com.rentcar.gestaoaluguer;
+package com.isp.aluguerautomoveisisp;
 
 public class Cliente {
     private String nome;
-    private String morada;
-    private String cc;
+    private String nif;
     private String cartaConducao;
 
-    public Cliente(String nome, String morada, String cc, String cartaConducao) {
+    public Cliente(String nome, String nif, String cartaConducao) {
         this.nome = nome;
-        this.morada = morada;
-        this.cc = cc;
+        this.nif = nif;
         this.cartaConducao = cartaConducao;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
+    public String getNif() {
+        return nif;
+    }
+
+    public String getCartaConducao() {
+        return cartaConducao;
+    }
+
+    @Override
+    public String toString() {
+        return "Cliente{" +
+                "nome='" + nome + '\'' +
+                ", NIF='" + nif + '\'' +
+                ", carta de condução='" + cartaConducao + '\'' +
+                '}';
+    }
 }

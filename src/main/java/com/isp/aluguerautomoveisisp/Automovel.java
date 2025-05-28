@@ -1,22 +1,41 @@
-package com.rentcar.gestaoaluguer;
+package com.isp.aluguerautomoveisisp;
 
 public class Automovel {
+    private String matricula;
     private String marca;
     private String modelo;
-    private String cor;
-    private int cilindrada;
     private int ano;
-    private String matricula;
-    private double valorDia;
 
-    public Automovel(String marca, String modelo, String cor, int cilindrada, int ano, String matricula, double valorDia) {
+    public Automovel(String matricula, String marca, String modelo, int ano) {
+        this.matricula = matricula;
         this.marca = marca;
         this.modelo = modelo;
-        this.cor = cor;
-        this.cilindrada = cilindrada;
         this.ano = ano;
-        this.matricula = matricula;
-        this.valorDia = valorDia;
     }
-    
+
+    public String getMatricula() {
+        return matricula;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public int getAno() {
+        return ano;
+    }
+
+    @Override
+    public String toString() {
+        return "Automóvel{" +
+                "matrícula='" + matricula + '\'' +
+                ", marca='" + marca + '\'' +
+                ", modelo='" + modelo + '\'' +
+                ", ano=" + ano +
+                '}';
+    }
 }
