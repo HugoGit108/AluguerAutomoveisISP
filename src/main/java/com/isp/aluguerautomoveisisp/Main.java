@@ -164,6 +164,7 @@ public class Main {
         System.out.print("Matrícula: ");
         String matricula = scanner.nextLine().trim();
 
+        // Verifica se a matrícula já existe na lista de automóveis
         for (Automovel a : automoveis) {
             if (a.getMatricula().equalsIgnoreCase(matricula)) {
                 System.out.println("Automóvel já existe.");
@@ -177,26 +178,34 @@ public class Main {
         System.out.print("Modelo: ");
         String modelo = scanner.nextLine().trim();
 
+        // Verifica se os campos marca e modelo estão vazios
+        if (marca.isEmpty() || modelo.isEmpty()) {
+            System.out.println("Marca e/ou modelo não podem estar vazios.");
+            return;
+        }
+
         System.out.print("Ano: ");
         int ano;
         try {
-            ano = Integer.parseInt(scanner.nextLine().trim());
+            ano = Integer.parseInt(scanner.nextLine());
 
-            // Vai buscar o ano atual
+            // validar a data
             int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
-            if (ano > anoAtual) {
-                System.out.println("Ano inválido.");
+            if (ano < 1880 || ano > anoAtual) {
+                System.out.println("Ano inválido. Deve estar entre 1900 e " + anoAtual + ".");
                 return;
             }
-
         } catch (NumberFormatException e) {
-            System.out.println("O ano inserido deve ser um numero");
+            System.out.println("O ano deve ser um número inteiro.");
             return;
         }
-        
+
         Automovel novo = new Automovel(matricula, marca, modelo, ano);
         automoveis.add(novo);
-        System.out.println("Automóvel inserido.");
+
+        System.out.println("Automóvel inserido com sucesso: " +
+            novo.getMarca() + " " + novo.getModelo() + " (" + novo.getAno() + ")");
+
     }
 
     private static void listarAutomoveis() {
