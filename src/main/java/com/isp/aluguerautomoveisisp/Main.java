@@ -48,8 +48,9 @@ public class Main {
         do {
             System.out.println("\n--- Menu Clientes ---");
             System.out.println("1. Inserir Cliente");
-            System.out.println("2. Listar Clientes");
-            System.out.println("3. Eliminar Cliente");
+            System.out.println("2. Alterar Cliente");
+            System.out.println("3. Listar Clientes");
+            System.out.println("4. Eliminar Cliente");
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
             opcao = Integer.parseInt(scanner.nextLine());
@@ -59,9 +60,12 @@ public class Main {
                     inserirCliente();
                     break;
                 case 2:
-                    listarClientes();
+                    alterarCliente();
                     break;
                 case 3:
+                    listarClientes();
+                    break;
+                case 4:
                     eliminarCliente();
                     break;
                 case 0:
@@ -127,25 +131,93 @@ public class Main {
     }
 
     private static void inserirCliente() {
-        System.out.print("NIF: ");
-        String nif = scanner.nextLine();
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine().trim();
+
+        System.out.print("Morada: ");
+        String morada = scanner.nextLine().trim();
+
+        System.out.print("Cartão de Cidadão (CC): ");
+        String cc = scanner.nextLine().trim();
+
+        System.out.print("Carta de Condução: ");
+        String carta = scanner.nextLine().trim();
+
+        // Validação de campos vazios
+        if (nome.isEmpty() || morada.isEmpty() || cc.isEmpty() || carta.isEmpty()) {
+            System.out.println("Nenhum campo pode estar vazio.");
+            return;
+        }
+
+        // Verificar duplicação da carta de condução
         for (Cliente c : clientes) {
-            if (c.getNif().equals(nif)) {
-                System.out.println("Cliente já existe.");
+            if (c.getCartaConducao().equalsIgnoreCase(carta)) {
+                System.out.println("Cliente com esta carta de condução já existe.");
                 return;
             }
         }
 
-        System.out.print("Nome: ");
-        String nome = scanner.nextLine();
-
-        System.out.print("Carta de Condução: ");
-        String carta = scanner.nextLine();
-
-        Cliente novo = new Cliente(nome, nif, carta);
+        Cliente novo = new Cliente(nome, morada, cc, carta);
         clientes.add(novo);
         System.out.println("Cliente inserido com sucesso.");
     }
+    
+    private static void alterarCliente() {
+        System.out.print("Carta de condução do cliente a alterar: ");
+        String carta = scanner.nextLine().trim();
+
+        Cliente clienteEncontrado = null;
+
+        // Procura o cliente pela carta de condução
+        for (Cliente c : clientes) {
+            if (c.getCartaConducao().equalsIgnoreCase(carta)) {
+                clienteEncontrado = c;
+                break;
+            }
+        }
+
+        if (clienteEncontrado == null) {
+            System.out.println("Cliente não encontrado.");
+            return;
+        }
+
+        System.out.println("Deixe em branco para manter o valor atual do campo.");
+
+        System.out.print("Nome (" + clienteEncontrado.getNome() + "): ");
+        String nome = scanner.nextLine().trim();
+        if (!nome.isEmpty()) {
+            clienteEncontrado.setNome(nome);
+        }
+
+        System.out.print("Morada (" + clienteEncontrado.getMorada() + "): ");
+        String morada = scanner.nextLine().trim();
+        if (!morada.isEmpty()) {
+            clienteEncontrado.setMorada(morada);
+        }
+
+        System.out.print("CC (" + clienteEncontrado.getCC() + "): ");
+        String cc = scanner.nextLine().trim();
+        if (!cc.isEmpty()) {
+            clienteEncontrado.setCC(cc);
+        }
+
+        System.out.print("Carta de condução (" + clienteEncontrado.getCartaConducao() + "): ");
+        String novaCarta = scanner.nextLine().trim();
+        if (!novaCarta.isEmpty()) {
+            // Verifica se a nova carta já existe para outro cliente
+            for (Cliente c : clientes) {
+                if (c.getCartaConducao().equalsIgnoreCase(novaCarta) && c != clienteEncontrado) {
+                    System.out.println("Já existe um cliente com essa carta de condução.");
+                    return;
+                }
+            }
+            clienteEncontrado.setCartaConducao(novaCarta);
+        }
+
+        System.out.println("Cliente alterado com sucesso.");
+    }
+
+
 
     private static void listarClientes() {
         for (Cliente c : clientes) {
@@ -154,17 +226,34 @@ public class Main {
     }
 
     private static void eliminarCliente() {
-        System.out.print("NIF do cliente a eliminar: ");
-        String nif = scanner.nextLine();
-        clientes.removeIf(c -> c.getNif().equals(nif));
-        System.out.println("Cliente removido.");
+        System.out.print("Carta de Condução do cliente a eliminar: ");
+        String carta = scanner.nextLine().trim();
+
+        if (clientes.isEmpty()) {
+            System.out.println("Não existem clientes registados.");
+            return;
+        }
+
+        Iterator<Cliente> iterator = clientes.iterator();
+        while (iterator.hasNext()) {
+            Cliente c = iterator.next();
+            if (c.getCartaConducao().equalsIgnoreCase(carta)) {
+                iterator.remove();
+                System.out.println("Cliente eliminado com sucesso.");
+                return;
+            }
+        }
+
+        System.out.println("Cliente não encontrado.");
     }
+
+
 
     private static void inserirAutomovel() {
         System.out.print("Matrícula: ");
         String matricula = scanner.nextLine().trim();
 
-        // Verifica se a matrícula já existe na lista de automóveis
+        // Verifica se já existe um automóvel com esta matrícula
         for (Automovel a : automoveis) {
             if (a.getMatricula().equalsIgnoreCase(matricula)) {
                 System.out.println("Automóvel já existe.");
@@ -172,39 +261,54 @@ public class Main {
             }
         }
 
+        // Introdução dos restantes dados
         System.out.print("Marca: ");
         String marca = scanner.nextLine().trim();
 
         System.out.print("Modelo: ");
         String modelo = scanner.nextLine().trim();
 
-        // Verifica se os campos marca e modelo estão vazios
-        if (marca.isEmpty() || modelo.isEmpty()) {
-            System.out.println("Marca e/ou modelo não podem estar vazios.");
-            return;
-        }
+        System.out.print("Cor: ");
+        String cor = scanner.nextLine().trim();
 
-        System.out.print("Ano: ");
-        int ano;
+        System.out.print("Cilindrada (cc): ");
+        int cilindrada;
         try {
-            ano = Integer.parseInt(scanner.nextLine());
-
-            // validar a data
-            int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
-            if (ano < 1880 || ano > anoAtual) {
-                System.out.println("Ano inválido. Deve estar entre 1900 e " + anoAtual + ".");
+            cilindrada = Integer.parseInt(scanner.nextLine().trim());
+            if (cilindrada <= 0) {
+                System.out.println("A cilindrada deve ser um número positivo.");
                 return;
             }
         } catch (NumberFormatException e) {
-            System.out.println("O ano deve ser um número inteiro.");
+            System.out.println("Cilindrada inválida.");
             return;
         }
 
-        Automovel novo = new Automovel(matricula, marca, modelo, ano);
-        automoveis.add(novo);
+        System.out.print("Ano de aquisição: ");
+        int ano;
+        try {
+            ano = Integer.parseInt(scanner.nextLine().trim());
+            int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
+            if (ano > anoAtual) {
+                System.out.println("Ano inválido.");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("O ano deve ser um número válido.");
+            return;
+        }
 
-        System.out.println("Automóvel inserido com sucesso: " +
-            novo.getMarca() + " " + novo.getModelo() + " (" + novo.getAno() + ")");
+
+        // Validação de campos obrigatórios
+        if (marca.isEmpty() || modelo.isEmpty() || cor.isEmpty()) {
+            System.out.println("Marca, modelo e cor não podem estar vazios.");
+            return;
+        }
+
+        // Criação do objeto e adição à lista
+        Automovel novo = new Automovel(matricula, marca, modelo, cor, cilindrada, ano);
+        automoveis.add(novo);
+        System.out.println("Automóvel inserido com sucesso.");
 
     }
 
