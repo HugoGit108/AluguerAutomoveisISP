@@ -5,13 +5,15 @@ public class Cliente {
     private String morada;
     private String cc;
     private String cartaConducao;
+    private String nif;
 
     // Construtor
-    public Cliente(String nome, String morada, String cc, String cartaConducao) {
+    public Cliente(String nome, String morada, String cc, String cartaConducao, String nif) {
         this.nome = nome;
         this.morada = morada;
         this.cc = cc;
         this.cartaConducao = cartaConducao;
+        this.nif = nif;
     }
 
     // Getters e Setters
@@ -42,15 +44,22 @@ public class Cliente {
     public void setCartaConducao(String cartaConducao) {
         this.cartaConducao = cartaConducao;
     }
+    public String getNif() {
+        return nif;
+    }
+    public void setNif(String Nif) {
+        this.nif = Nif;
+    }
 
 
     @Override
     public String toString() {
         return "Cliente{" +
-                "nome='" + nome + '\'' +
-                ", morada='" + morada + '\'' +
-                ", cc='" + cc + '\'' +
-                ", cartaConducao='" + cartaConducao + '\'' +
+                "Nome='" + nome + '\'' +
+                ", Morada='" + morada + '\'' +
+                ", CC='" + cc + '\'' +
+                ", Nif='" + nif + '\'' +
+                ", Carta de Conducao='" + cartaConducao + '\'' +
                 '}';
     }
 }

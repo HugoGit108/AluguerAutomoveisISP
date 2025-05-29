@@ -131,6 +131,19 @@ public class Main {
     }
 
     private static void inserirCliente() {
+        System.out.print("Carta de Condução: ");
+        String carta = scanner.nextLine().trim();
+       
+        // Verificar duplicação da carta de condução 
+        for (Cliente c : clientes) {
+            if (c.getCartaConducao().equalsIgnoreCase(carta)) {
+                System.out.println("Cliente com esta carta de condução já existe.");
+                return;
+            }
+        }
+        System.out.print("Vat/Nif: ");
+        String Nif = scanner.nextLine().trim();
+        
         System.out.print("Nome: ");
         String nome = scanner.nextLine().trim();
 
@@ -140,24 +153,16 @@ public class Main {
         System.out.print("Cartão de Cidadão (CC): ");
         String cc = scanner.nextLine().trim();
 
-        System.out.print("Carta de Condução: ");
-        String carta = scanner.nextLine().trim();
 
         // Validação de campos vazios
-        if (nome.isEmpty() || morada.isEmpty() || cc.isEmpty() || carta.isEmpty()) {
+        if (nome.isEmpty() || morada.isEmpty() || cc.isEmpty() || carta.isEmpty()|| Nif.isEmpty()) {
             System.out.println("Nenhum campo pode estar vazio.");
             return;
         }
 
-        // Verificar duplicação da carta de condução
-        for (Cliente c : clientes) {
-            if (c.getCartaConducao().equalsIgnoreCase(carta)) {
-                System.out.println("Cliente com esta carta de condução já existe.");
-                return;
-            }
-        }
+        
 
-        Cliente novo = new Cliente(nome, morada, cc, carta);
+        Cliente novo = new Cliente(nome, morada, cc, carta, Nif);
         clientes.add(novo);
         System.out.println("Cliente inserido com sucesso.");
     }
@@ -188,6 +193,11 @@ public class Main {
         if (!nome.isEmpty()) {
             clienteEncontrado.setNome(nome);
         }
+        System.out.print("Nif/Vat (" + clienteEncontrado.getNif() + "): ");
+        String Nif = scanner.nextLine().trim();
+        if (!Nif.isEmpty()) {
+            clienteEncontrado.setNif(Nif);
+        }
 
         System.out.print("Morada (" + clienteEncontrado.getMorada() + "): ");
         String morada = scanner.nextLine().trim();
@@ -195,10 +205,10 @@ public class Main {
             clienteEncontrado.setMorada(morada);
         }
 
-        System.out.print("CC (" + clienteEncontrado.getCC() + "): ");
+        System.out.print("CC (" + clienteEncontrado.getCc() + "): ");
         String cc = scanner.nextLine().trim();
         if (!cc.isEmpty()) {
-            clienteEncontrado.setCC(cc);
+            clienteEncontrado.setCc(cc);
         }
 
         System.out.print("Carta de condução (" + clienteEncontrado.getCartaConducao() + "): ");
@@ -220,10 +230,16 @@ public class Main {
 
 
     private static void listarClientes() {
-        for (Cliente c : clientes) {
+        if (clientes.isEmpty()) {
+         System.out.println("Não existem clientes registados.");
+        } else {
+            System.out.println("===== Lista de Clientes =====");
+            for (Cliente c : clientes) {
             System.out.println(c);
+            }
         }
     }
+
 
     private static void eliminarCliente() {
         System.out.print("Carta de Condução do cliente a eliminar: ");
