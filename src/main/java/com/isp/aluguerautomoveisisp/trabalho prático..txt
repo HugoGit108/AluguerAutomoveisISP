@@ -8,6 +8,12 @@ Verificar se a matricula já existe ou não, colocando como primeiro no inserir(
 matricula: dígitos
 Ano de aquisição: não pode ultrapassar o ano de 2025
 
+nos veiculos podemos já ter uma matriz com os devidos veiculos/dados guardados que assim nao temos de estar constantemente a inserir os veiculos
+facilia que assim nao temos de estar a inserir, eliminar e editar, assim podemos apenas usar a listagem para ver todos os veiculos que existem
+podemos "eliminar" o veiculo temporariamente, pois assim sabes que esse carro já está a ser alugado ou colocar uma listagem com todos os veiculos e se o veiculo já estiver a ser utilizado
+aparecer a frente tp " este já está alugado"
+colocar qual o carro que foi mais alugado, colocar qual o mes que mais houve aluger de carros, o cliente que já alugou mais carros.
+ordenar os clientes por ordem alfabética, ordenar os veiculos por ano
 
 como começar
 fazer primeiro a base do trabalho, inserir, eliminar e pesquisar e depois começar com os pequenos detalhes do trabalho(o que está em cima)
