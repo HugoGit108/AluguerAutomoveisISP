@@ -18,11 +18,17 @@ public class Main {
 
     public static void main(String[] args) {
         
-        automoveis.add(new Automovel("1234AAA", "Toyota", "Yaris", "Branco", 1200, 2021));
-        automoveis.add(new Automovel("5678BBB", "Renault", "Clio", "Cinza", 1300, 2020));
-        automoveis.add(new Automovel("9012CCC", "BMW", "Serie 1", "Preto", 1500, 2022));
-        automoveis.add(new Automovel("3456DDD", "Volkswagen", "Golf", "Azul", 1400, 2019));
-        automoveis.add(new Automovel("7890EEE", "Peugeot", "208", "Vermelho", 1200, 2023));
+        automoveis.add(new Automovel("AA08AM", "Seat", "Leon", "Preto", 1900, 2000));
+        automoveis.add(new Automovel("XQ33QX", "Volkswagen", "Passat", "Preto", 1900, 2000));
+        automoveis.add(new Automovel("AA00AA", "Volkswagen", "Golf GTI", "Branco", 2000, 2013));
+        automoveis.add(new Automovel("BP89TD", "Nissan", "Pulsar", "Preto", 1200, 2015));
+        automoveis.add(new Automovel("FH12PD", "Citroen", "Berlingo", "Branca", 1600, 2016));
+        
+        clientes.add(new Cliente ("Pedro", "Avenida João Deus", "53849995", "12345678", "250294664"));
+        clientes.add(new Cliente ("Gabriel", "Praceta do Bagaço", "45681236", "25478561", "125478963"));
+        clientes.add(new Cliente ("Gonçalo", "Rua Misericórdia", "14895632", "35489624", "253478961"));
+        clientes.add(new Cliente ("Rocha", "Rua Joaquim Madureira", "78459126", "12478430", "254301456"));
+        clientes.add(new Cliente ("Fernando", "Rua das Farrapas", "12547896", "12402578", "215478963"));
 
         int opcao;
         do {
@@ -30,6 +36,7 @@ public class Main {
             System.out.println("1. Menu Clientes");
             System.out.println("2. Menu Automóveis");
             System.out.println("3. Menu Aluguer");
+            System.out.println("4. Estatisticas:");
             System.out.println("0. Sair");
             System.out.print("Escolha uma opção: ");
             opcao = Integer.parseInt(scanner.nextLine());
@@ -508,23 +515,70 @@ public class Main {
         System.out.println(aluguerAtivo);
         System.out.printf("Valor a pagar: %.2f€ (%d dias × %.2f€/dia)%n", valor, dias, PRECO_FIXO_POR_DIA);
     }
-
     
-    private static boolean veiculoDisponivel(String matricula) {
-        return alugueres.stream().noneMatch(a ->
-            a.getMatriculaVeiculo().equalsIgnoreCase(matricula) && a.getDataDevolucao() == null
-        );
-    }
-
     
-    private static boolean veiculoDisponivelNoPeriodo(String matricula, LocalDate inicio, LocalDate fim) {
-        return alugueres.stream().noneMatch(a ->
-            a.getMatriculaVeiculo().equalsIgnoreCase(matricula) && (
-                // Sobreposição de datas
-                (a.getDataDevolucao() == null && !inicio.isAfter(a.getFim())) || 
-                (a.getDataDevolucao() != null && a.getDataDevolucao().equals(inicio)) // devolvido no mesmo dia
-            )
-        );
+/*    public static void mostrarEstatisticas(List<Cliente> clientes, List<Automovel> automoveis, List<Aluguer> alugueres) {
+        // Carro mais alugado
+        Map<Automovel, Long> aluguerPorCarro = alugueres.stream()
+            .collect(Collectors.groupingBy(a -> a.automovel, Collectors.counting()));
+
+        Automovel carroMaisAlugado = aluguerPorCarro.entrySet().stream()
+            .max(Map.Entry.comparingByValue())
+            .map(Map.Entry::getKey)
+            .orElse(null);
+
+        // Mês com mais alugueres
+        Map<Month, Long> alugueresPorMes = alugueres.stream()
+            .collect(Collectors.groupingBy(a -> a.data.getMonth(), Collectors.counting()));
+
+        Month mesMaisAlugado = alugueresPorMes.entrySet().stream()
+            .max(Map.Entry.comparingByValue())
+            .map(Map.Entry::getKey)
+            .orElse(null);
+
+        // Cliente com mais alugueres
+        Map<Cliente, Long> aluguerPorCliente = alugueres.stream()
+            .collect(Collectors.groupingBy(a -> a.cliente, Collectors.counting()));
+
+        Cliente clienteMaisAlugou = aluguerPorCliente.entrySet().stream()
+            .max(Map.Entry.comparingByValue())
+            .map(Map.Entry::getKey)
+            .orElse(null);
+
+        // Ordenar clientes por ordem alfabética
+        List<Cliente> clientesOrdenados = new ArrayList<>(clientes);
+        clientesOrdenados.sort(Comparator.comparing(Cliente::getNome));
+
+        // Ordenar automóveis por ano (do mais recente para o mais antigo)
+        List<Automovel> automoveisOrdenados = new ArrayList<>(automoveis);
+        automoveisOrdenados.sort(Comparator.comparing(Automovel::getAno).reversed());
+
+        // Impressão dos resultados
+        System.out.println("=== Estatísticas ===");
+
+        if (carroMaisAlugado != null) {
+            System.out.println("Carro mais alugado: " + carroMaisAlugado.getDescricao());
+        }
+
+        if (mesMaisAlugado != null) {
+            System.out.println("Mês com mais alugueres: " + mesMaisAlugado);
+        }
+
+        if (clienteMaisAlugou != null) {
+            System.out.println("Cliente que mais alugou: " + clienteMaisAlugou.getNome());
+        }
+
+        System.out.println("\nClientes por ordem alfabética:");
+        for (Cliente c : clientesOrdenados) {
+            System.out.println("- " + c.getNome());
+        }
+
+        System.out.println("\nAutomóveis ordenados por ano:");
+        for (Automovel a : automoveisOrdenados) {
+            System.out.println("- " + a.getDescricao() + " (" + a.getAno() + ")");
+        }
     }
+*/
+    
 
 }

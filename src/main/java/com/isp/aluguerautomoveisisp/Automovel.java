@@ -18,7 +18,7 @@ class Automovel {
 
     @Override
     public String toString() {
-        return String.format("Automóvel: %s, %s %s, Cor: %s, Cilindrada: %dcc, Ano: %d",
-                matricula, marca, modelo, cor, cilindrada, ano);
+        return String.format("Automóvel: Matricula: %s, Marca: %s Modelo: %s, Cor: %s, Cilindrada: %dcc, Ano: %d",
+        matricula, marca, modelo, cor, cilindrada, ano);
     }
 }
