@@ -14,8 +14,16 @@ public class Main {
     private static final List<Automovel> automoveis = new ArrayList<>();
     private static List<Aluguer> alugueres = new ArrayList<>();
     private static final double PRECO_FIXO_POR_DIA = 50.0;
+    
 
     public static void main(String[] args) {
+        
+        automoveis.add(new Automovel("1234AAA", "Toyota", "Yaris", "Branco", 1200, 2021));
+        automoveis.add(new Automovel("5678BBB", "Renault", "Clio", "Cinza", 1300, 2020));
+        automoveis.add(new Automovel("9012CCC", "BMW", "Serie 1", "Preto", 1500, 2022));
+        automoveis.add(new Automovel("3456DDD", "Volkswagen", "Golf", "Azul", 1400, 2019));
+        automoveis.add(new Automovel("7890EEE", "Peugeot", "208", "Vermelho", 1200, 2023));
+
         int opcao;
         do {
             System.out.println("\nMenu Principal:");
@@ -37,7 +45,6 @@ public class Main {
                     menuAluguer();
                     break;
                 case 0:
-                    System.out.println("A sair...");
                     break;
                 default:
                     System.out.println("Opção inválida!");
@@ -263,7 +270,7 @@ public class Main {
         System.out.print("Matrícula: ");
         String matricula = scanner.nextLine().trim();
 
-        // Validação: matrícula não pode estar vazia
+        // matrícula vazia
         if (matricula.isEmpty()) {
             System.out.println("A matrícula não pode estar vazia.");
             return;
@@ -346,6 +353,7 @@ public class Main {
         }
     }
 
+    
     private static void criarAluguer() {
         System.out.print("Carta de condução do cliente: ");
         String carta = scanner.nextLine().trim();
@@ -353,41 +361,6 @@ public class Main {
         Cliente cliente = encontrarClientePorCarta(carta);
         if (cliente == null) {
             System.out.println("Cliente não encontrado.");
-            return;
-        }
-
-        boolean clienteComAluguerAtivo = alugueres.stream()
-                .anyMatch(a -> a.getCartaConducaoCliente().equalsIgnoreCase(carta) && !a.isDevolvido());
-
-        if (clienteComAluguerAtivo) {
-            System.out.println("Este cliente já tem um aluguer ativo.");
-            return;
-        }
-
-        List<Automovel> disponiveis = automoveis.stream()
-                .filter(v -> alugueres.stream()
-                        .noneMatch(a -> a.getMatriculaVeiculo().equalsIgnoreCase(v.getMatricula()) && !a.isDevolvido()))
-                .toList();
-
-        if (disponiveis.isEmpty()) {
-            System.out.println("Não existem veículos disponíveis para aluguer.");
-            return;
-        }
-
-        System.out.println("Veículos disponíveis:");
-        for (Automovel a : disponiveis) {
-            System.out.println(a);
-        }
-
-        System.out.print("Matrícula do veículo a alugar: ");
-        String matricula = scanner.nextLine().trim();
-
-        Automovel veiculo = automoveis.stream()
-                .filter(a -> a.getMatricula().equalsIgnoreCase(matricula))
-                .findFirst().orElse(null);
-
-        if (veiculo == null) {
-            System.out.println("Veículo não encontrado.");
             return;
         }
 
@@ -414,8 +387,34 @@ public class Main {
             return;
         }
 
+        // Mostrar veículos disponíveis para esse período
+        List<Automovel> disponiveis = automoveis.stream()
+            .filter(v -> veiculoDisponivel(v.getMatricula(), dataInicio, dataFim))
+            .toList();
+
+        if (disponiveis.isEmpty()) {
+            System.out.println("Não existem veículos disponíveis para aluguer nesse período.");
+            return;
+        }
+
+        for (Automovel a : disponiveis) {
+            System.out.println(a);
+        }
+
+        System.out.print("Matrícula do veículo a alugar: ");
+        String matricula = scanner.nextLine().trim();
+
+        Automovel veiculo = automoveis.stream()
+                .filter(a -> a.getMatricula().equalsIgnoreCase(matricula))
+                .findFirst().orElse(null);
+
+        if (veiculo == null) {
+            System.out.println("Veículo não encontrado.");
+            return;
+        }
+
         if (!veiculoDisponivel(matricula, dataInicio, dataFim)) {
-            System.out.println("Este veículo já está alugado para o período indicado.");
+            System.out.println("Este veículo já está alugado ou indisponível para o período indicado.");
             return;
         }
 
@@ -425,7 +424,29 @@ public class Main {
         System.out.println("Aluguer criado com sucesso:");
         System.out.println(novo);
     }
+    
+    private static boolean veiculoDisponivel(String matricula, LocalDate dataInicio, LocalDate dataFim) {
+        for (Aluguer a : alugueres) {
+            if (a.getMatriculaVeiculo().equalsIgnoreCase(matricula)) {
+                LocalDate devolucao = a.getDataDevolucao();
 
+                // Se não devolvido, veículo está ocupado
+                if (devolucao == null) {
+                    // Verifica sobreposição do período do aluguer ativo com o pedido
+                    if (!(dataFim.isBefore(a.getInicio()) || dataInicio.isAfter(a.getFim()))) {
+                        return false;
+                    }
+                } else {
+                    // Se devolvido, novo aluguer deve começar após a data de devolução
+                    if (!dataInicio.isAfter(devolucao)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    
     private static Cliente encontrarClientePorCarta(String carta) {
         for (Cliente c : clientes) {
             if (c.getCartaConducao().equalsIgnoreCase(carta)) {
@@ -446,32 +467,23 @@ public class Main {
         }
     }
 
-    private static boolean veiculoDisponivel(String matricula, LocalDate inicio, LocalDate fim) {
-        for (Aluguer a : alugueres) {
-            if (a.getMatriculaVeiculo().equalsIgnoreCase(matricula) && !a.isDevolvido()) {
-                if (!(fim.isBefore(a.getInicio()) || inicio.isAfter(a.getFim()))) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 
     private static void devolverAluguer() {
-        System.out.print("Carta de condução do cliente: ");
-        String carta = scanner.nextLine().trim();
+        System.out.print("Matrícula do veículo: ");
+        String matricula = scanner.nextLine().trim();
 
+        // Procurar aluguer ativo para esse veículo (sem data de devolução)
         Aluguer aluguerAtivo = alugueres.stream()
-                .filter(a -> a.getCartaConducaoCliente().equalsIgnoreCase(carta) && !a.isDevolvido())
-                .findFirst()
-                .orElse(null);
+            .filter(a -> a.getMatriculaVeiculo().equalsIgnoreCase(matricula) && a.getDataDevolucao() == null)
+            .findFirst()
+            .orElse(null);
 
         if (aluguerAtivo == null) {
-            System.out.println("Nenhum aluguer ativo encontrado para este cliente.");
+            System.out.println("Nenhum aluguer ativo encontrado para este veículo.");
             return;
         }
 
-        System.out.print("Data da devolução (AAAA-MM-DD): ");
+        System.out.print("Data de devolução (AAAA-MM-DD): ");
         LocalDate dataDevolucao;
         try {
             dataDevolucao = LocalDate.parse(scanner.nextLine());
@@ -481,15 +493,14 @@ public class Main {
         }
 
         if (dataDevolucao.isBefore(aluguerAtivo.getInicio())) {
-            System.out.println("A data da devolução não pode ser anterior ao início do aluguer.");
+            System.out.println("Data de devolução não pode ser antes da data de início do aluguer.");
             return;
         }
 
-        aluguerAtivo.setDevolvido(true);
-        aluguerAtivo.setFim(dataDevolucao);
+        aluguerAtivo.setDataDevolucao(dataDevolucao);
 
-        long dias = java.time.temporal.ChronoUnit.DAYS.between(aluguerAtivo.getInicio(), aluguerAtivo.getFim());
-        if (dias == 0) dias = 1; // mínimo 1 dia
+        long dias = java.time.temporal.ChronoUnit.DAYS.between(
+            aluguerAtivo.getInicio(), aluguerAtivo.getFim());
 
         double valor = dias * PRECO_FIXO_POR_DIA;
 
@@ -497,4 +508,23 @@ public class Main {
         System.out.println(aluguerAtivo);
         System.out.printf("Valor a pagar: %.2f€ (%d dias × %.2f€/dia)%n", valor, dias, PRECO_FIXO_POR_DIA);
     }
+
+    
+    private static boolean veiculoDisponivel(String matricula) {
+        return alugueres.stream().noneMatch(a ->
+            a.getMatriculaVeiculo().equalsIgnoreCase(matricula) && a.getDataDevolucao() == null
+        );
+    }
+
+    
+    private static boolean veiculoDisponivelNoPeriodo(String matricula, LocalDate inicio, LocalDate fim) {
+        return alugueres.stream().noneMatch(a ->
+            a.getMatriculaVeiculo().equalsIgnoreCase(matricula) && (
+                // Sobreposição de datas
+                (a.getDataDevolucao() == null && !inicio.isAfter(a.getFim())) || 
+                (a.getDataDevolucao() != null && a.getDataDevolucao().equals(inicio)) // devolvido no mesmo dia
+            )
+        );
+    }
+
 }

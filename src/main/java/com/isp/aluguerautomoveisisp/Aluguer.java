@@ -7,16 +7,17 @@ class Aluguer {
     private String matriculaVeiculo;
     private LocalDate inicio;
     private LocalDate fim;
-    private boolean devolvido;
+    private LocalDate dataDevolucao; 
 
     public Aluguer(String cartaConducaoCliente, String matriculaVeiculo, LocalDate inicio, LocalDate fim) {
         this.cartaConducaoCliente = cartaConducaoCliente;
         this.matriculaVeiculo = matriculaVeiculo;
         this.inicio = inicio;
         this.fim = fim;
-        this.devolvido = false;
+        this.dataDevolucao = null;
     }
 
+    // Getters
     public String getCartaConducaoCliente() {
         return cartaConducaoCliente;
     }
@@ -37,17 +38,22 @@ class Aluguer {
         this.fim = fim;
     }
 
-    public boolean isDevolvido() {
-        return devolvido;
+    public LocalDate getDataDevolucao() {
+        return dataDevolucao;
     }
 
-    public void setDevolvido(boolean devolvido) {
-        this.devolvido = devolvido;
+    public void setDataDevolucao(LocalDate dataDevolucao) {
+        this.dataDevolucao = dataDevolucao;
+    }
+
+    public boolean isDevolvido() {
+        return dataDevolucao != null;
     }
 
     @Override
     public String toString() {
-        return String.format("Aluguer: Cliente %s, Veículo %s, De %s até %s, Devolvido: %s",
-                cartaConducaoCliente, matriculaVeiculo, inicio, fim, devolvido ? "Sim" : "Não");
+        return String.format("Aluguer: Cliente %s, Veículo %s, De %s até %s, Devolvido em: %s",
+                cartaConducaoCliente, matriculaVeiculo, inicio, fim,
+                (dataDevolucao != null ? dataDevolucao.toString() : "Ainda ativo"));
     }
-}1
+}
