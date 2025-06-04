@@ -1,16 +1,19 @@
 package com.isp.aluguerautomoveisisp;
 
-import java.util.Scanner;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
-    
-        private static final Scanner scanner = new Scanner(System.in);
-        private static final List<Cliente> clientes = new ArrayList<>();
-        private static final List<Automovel> automoveis = new ArrayList<>();
-        private static final List<Aluguer> alugueres = new ArrayList<>();
-        private static final double PRECO_FIXO_POR_DIA = 50.0;
+
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final List<Cliente> clientes = new ArrayList<>();
+    private static final List<Automovel> automoveis = new ArrayList<>();
+    private static List<Aluguer> alugueres = new ArrayList<>();
+    private static final double PRECO_FIXO_POR_DIA = 50.0;
 
     public static void main(String[] args) {
         int opcao;
@@ -23,7 +26,6 @@ public class Main {
             System.out.print("Escolha uma opção: ");
             opcao = Integer.parseInt(scanner.nextLine());
 
-            // menu inicial -> depois vai sair daqui para fazer parte visual
             switch (opcao) {
                 case 1:
                     menuClientes();
@@ -111,6 +113,7 @@ public class Main {
             System.out.println("\n--- Menu Aluguer ---");
             System.out.println("1. Criar Aluguer");
             System.out.println("2. Listar Alugueres");
+            System.out.println("3. Devolver Aluguer");
             System.out.println("0. Voltar");
             System.out.print("Escolha uma opção: ");
             opcao = Integer.parseInt(scanner.nextLine());
@@ -121,6 +124,9 @@ public class Main {
                     break;
                 case 2:
                     listarAlugueres();
+                    break;
+                case 3:
+                    devolverAluguer();
                     break;
                 case 0:
                     break;
@@ -133,8 +139,7 @@ public class Main {
     private static void inserirCliente() {
         System.out.print("Carta de Condução: ");
         String carta = scanner.nextLine().trim();
-       
-        // Verificar duplicação da carta de condução 
+
         for (Cliente c : clientes) {
             if (c.getCartaConducao().equalsIgnoreCase(carta)) {
                 System.out.println("Cliente com esta carta de condução já existe.");
@@ -143,7 +148,7 @@ public class Main {
         }
         System.out.print("Vat/Nif: ");
         String Nif = scanner.nextLine().trim();
-        
+
         System.out.print("Nome: ");
         String nome = scanner.nextLine().trim();
 
@@ -153,27 +158,22 @@ public class Main {
         System.out.print("Cartão de Cidadão (CC): ");
         String cc = scanner.nextLine().trim();
 
-
-        // Validação de campos vazios
-        if (nome.isEmpty() || morada.isEmpty() || cc.isEmpty() || carta.isEmpty()|| Nif.isEmpty()) {
+        if (nome.isEmpty() || morada.isEmpty() || cc.isEmpty() || carta.isEmpty() || Nif.isEmpty()) {
             System.out.println("Nenhum campo pode estar vazio.");
             return;
         }
-
-        
 
         Cliente novo = new Cliente(nome, morada, cc, carta, Nif);
         clientes.add(novo);
         System.out.println("Cliente inserido com sucesso.");
     }
-    
+
     private static void alterarCliente() {
         System.out.print("Carta de condução do cliente a alterar: ");
         String carta = scanner.nextLine().trim();
 
         Cliente clienteEncontrado = null;
 
-        // Procura o cliente pela carta de condução
         for (Cliente c : clientes) {
             if (c.getCartaConducao().equalsIgnoreCase(carta)) {
                 clienteEncontrado = c;
@@ -214,7 +214,6 @@ public class Main {
         System.out.print("Carta de condução (" + clienteEncontrado.getCartaConducao() + "): ");
         String novaCarta = scanner.nextLine().trim();
         if (!novaCarta.isEmpty()) {
-            // Verifica se a nova carta já existe para outro cliente
             for (Cliente c : clientes) {
                 if (c.getCartaConducao().equalsIgnoreCase(novaCarta) && c != clienteEncontrado) {
                     System.out.println("Já existe um cliente com essa carta de condução.");
@@ -227,19 +226,16 @@ public class Main {
         System.out.println("Cliente alterado com sucesso.");
     }
 
-
-
     private static void listarClientes() {
         if (clientes.isEmpty()) {
-         System.out.println("Não existem clientes registados.");
+            System.out.println("Não existem clientes registados.");
         } else {
             System.out.println("===== Lista de Clientes =====");
             for (Cliente c : clientes) {
-            System.out.println(c);
+                System.out.println(c);
             }
         }
     }
-
 
     private static void eliminarCliente() {
         System.out.print("Carta de Condução do cliente a eliminar: ");
@@ -263,16 +259,20 @@ public class Main {
         System.out.println("Cliente não encontrado.");
     }
 
-
-
     private static void inserirAutomovel() {
         System.out.print("Matrícula: ");
         String matricula = scanner.nextLine().trim();
 
+        // Validação: matrícula não pode estar vazia
+        if (matricula.isEmpty()) {
+            System.out.println("A matrícula não pode estar vazia.");
+            return;
+        }
+
         // Verifica se já existe um automóvel com esta matrícula
         for (Automovel a : automoveis) {
             if (a.getMatricula().equalsIgnoreCase(matricula)) {
-                System.out.println("Automóvel já existe.");
+                System.out.println("Automóvel com esta matrícula já existe.");
                 return;
             }
         }
@@ -304,9 +304,9 @@ public class Main {
         int ano;
         try {
             ano = Integer.parseInt(scanner.nextLine().trim());
-            int anoAtual = Calendar.getInstance().get(Calendar.YEAR);
+            int anoAtual = 2025; // Limite conforme apontamentos
             if (ano > anoAtual) {
-                System.out.println("Ano inválido.");
+                System.out.println("Ano inválido. Não pode ser superior a 2025.");
                 return;
             }
         } catch (NumberFormatException e) {
@@ -314,91 +314,187 @@ public class Main {
             return;
         }
 
-
-        // Validação de campos obrigatórios
         if (marca.isEmpty() || modelo.isEmpty() || cor.isEmpty()) {
             System.out.println("Marca, modelo e cor não podem estar vazios.");
             return;
         }
 
-        // Criação do objeto e adição à lista
         Automovel novo = new Automovel(matricula, marca, modelo, cor, cilindrada, ano);
         automoveis.add(novo);
         System.out.println("Automóvel inserido com sucesso.");
-
     }
 
     private static void listarAutomoveis() {
-        for (Automovel a : automoveis) {
-            System.out.println(a);
+        if (automoveis.isEmpty()) {
+            System.out.println("Não existem automóveis registados.");
+        } else {
+            System.out.println("===== Lista de Automóveis =====");
+            for (Automovel a : automoveis) {
+                System.out.println(a);
+            }
         }
     }
 
     private static void eliminarAutomovel() {
         System.out.print("Matrícula do automóvel a eliminar: ");
         String mat = scanner.nextLine();
-        automoveis.removeIf(a -> a.getMatricula().equalsIgnoreCase(mat));
-        System.out.println("Automóvel removido.");
+        boolean removed = automoveis.removeIf(a -> a.getMatricula().equalsIgnoreCase(mat));
+        if (removed) {
+            System.out.println("Automóvel removido.");
+        } else {
+            System.out.println("Automóvel não encontrado.");
+        }
     }
 
     private static void criarAluguer() {
-        System.out.print("NIF do cliente: ");
-        String nif = scanner.nextLine();
-        Cliente cliente = clientes.stream().filter(c -> c.getNif().equals(nif)).findFirst().orElse(null);
+        System.out.print("Carta de condução do cliente: ");
+        String carta = scanner.nextLine().trim();
+
+        Cliente cliente = encontrarClientePorCarta(carta);
         if (cliente == null) {
             System.out.println("Cliente não encontrado.");
             return;
         }
 
-        // Verifica se já tem um aluguer ativo
-        for (Aluguer a : alugueres) {
-            if (a.getCliente().equals(cliente)) {
-                if (!a.getDataFim().isBefore(LocalDate.now())) {
-                    System.out.println("Este cliente já tem um aluguer ativo.");
-                    return;
-                }
-            }
-        }
+        boolean clienteComAluguerAtivo = alugueres.stream()
+                .anyMatch(a -> a.getCartaConducaoCliente().equalsIgnoreCase(carta) && !a.isDevolvido());
 
-        System.out.print("Matrícula do automóvel: ");
-        String mat = scanner.nextLine();
-        Automovel carro = automoveis.stream().filter(a -> a.getMatricula().equalsIgnoreCase(mat)).findFirst().orElse(null);
-        if (carro == null) {
-            // do later -> fazer aqui loop while ate colocar a matricula direita
-            System.out.println("Automóvel não encontrado.");
+        if (clienteComAluguerAtivo) {
+            System.out.println("Este cliente já tem um aluguer ativo.");
             return;
         }
 
-        // Verificar se está disponível
-        for (Aluguer a : alugueres) {
-            if (a.getAutomovel().equals(carro)) {
-                if (!a.getDataFim().isBefore(LocalDate.now())) {
-                    // do later -> fazer aqui loop while ate colocar a matricula direita
+        List<Automovel> disponiveis = automoveis.stream()
+                .filter(v -> alugueres.stream()
+                        .noneMatch(a -> a.getMatriculaVeiculo().equalsIgnoreCase(v.getMatricula()) && !a.isDevolvido()))
+                .toList();
 
-                    System.out.println("Este automóvel está ocupado.");
-                    return;
-                }
-            }
-        }
-
-
-        System.out.print("Data início (AAAA-MM-DD): ");
-        LocalDate inicio = LocalDate.parse(scanner.nextLine());
-        System.out.print("Data fim (AAAA-MM-DD): ");
-        LocalDate fim = LocalDate.parse(scanner.nextLine());
-        if (fim.isBefore(inicio)) {
-            System.out.println("Data de fim inválida.");
+        if (disponiveis.isEmpty()) {
+            System.out.println("Não existem veículos disponíveis para aluguer.");
             return;
         }
 
-        Aluguer novo = new Aluguer(cliente, carro, inicio, fim);
+        System.out.println("Veículos disponíveis:");
+        for (Automovel a : disponiveis) {
+            System.out.println(a);
+        }
+
+        System.out.print("Matrícula do veículo a alugar: ");
+        String matricula = scanner.nextLine().trim();
+
+        Automovel veiculo = automoveis.stream()
+                .filter(a -> a.getMatricula().equalsIgnoreCase(matricula))
+                .findFirst().orElse(null);
+
+        if (veiculo == null) {
+            System.out.println("Veículo não encontrado.");
+            return;
+        }
+
+        System.out.print("Data de início (AAAA-MM-DD): ");
+        LocalDate dataInicio;
+        try {
+            dataInicio = LocalDate.parse(scanner.nextLine());
+        } catch (Exception e) {
+            System.out.println("Data inválida.");
+            return;
+        }
+
+        System.out.print("Data de fim (AAAA-MM-DD): ");
+        LocalDate dataFim;
+        try {
+            dataFim = LocalDate.parse(scanner.nextLine());
+        } catch (Exception e) {
+            System.out.println("Data inválida.");
+            return;
+        }
+
+        if (dataFim.isBefore(dataInicio) || dataFim.isEqual(dataInicio)) {
+            System.out.println("A data de fim deve ser posterior à data de início.");
+            return;
+        }
+
+        if (!veiculoDisponivel(matricula, dataInicio, dataFim)) {
+            System.out.println("Este veículo já está alugado para o período indicado.");
+            return;
+        }
+
+        Aluguer novo = new Aluguer(carta, matricula, dataInicio, dataFim);
         alugueres.add(novo);
-        System.out.println("Aluguer criado: " + novo);
+
+        System.out.println("Aluguer criado com sucesso:");
+        System.out.println(novo);
+    }
+
+    private static Cliente encontrarClientePorCarta(String carta) {
+        for (Cliente c : clientes) {
+            if (c.getCartaConducao().equalsIgnoreCase(carta)) {
+                return c;
+            }
+        }
+        return null;
     }
 
     private static void listarAlugueres() {
+        if (alugueres.isEmpty()) {
+            System.out.println("Não existem alugueres registados.");
+            return;
+        }
+        System.out.println("===== Lista de Alugueres =====");
         for (Aluguer a : alugueres) {
             System.out.println(a);
         }
+    }
+
+    private static boolean veiculoDisponivel(String matricula, LocalDate inicio, LocalDate fim) {
+        for (Aluguer a : alugueres) {
+            if (a.getMatriculaVeiculo().equalsIgnoreCase(matricula) && !a.isDevolvido()) {
+                if (!(fim.isBefore(a.getInicio()) || inicio.isAfter(a.getFim()))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static void devolverAluguer() {
+        System.out.print("Carta de condução do cliente: ");
+        String carta = scanner.nextLine().trim();
+
+        Aluguer aluguerAtivo = alugueres.stream()
+                .filter(a -> a.getCartaConducaoCliente().equalsIgnoreCase(carta) && !a.isDevolvido())
+                .findFirst()
+                .orElse(null);
+
+        if (aluguerAtivo == null) {
+            System.out.println("Nenhum aluguer ativo encontrado para este cliente.");
+            return;
+        }
+
+        System.out.print("Data da devolução (AAAA-MM-DD): ");
+        LocalDate dataDevolucao;
+        try {
+            dataDevolucao = LocalDate.parse(scanner.nextLine());
+        } catch (Exception e) {
+            System.out.println("Data inválida.");
+            return;
+        }
+
+        if (dataDevolucao.isBefore(aluguerAtivo.getInicio())) {
+            System.out.println("A data da devolução não pode ser anterior ao início do aluguer.");
+            return;
+        }
+
+        aluguerAtivo.setDevolvido(true);
+        aluguerAtivo.setFim(dataDevolucao);
+
+        long dias = java.time.temporal.ChronoUnit.DAYS.between(aluguerAtivo.getInicio(), aluguerAtivo.getFim());
+        if (dias == 0) dias = 1; // mínimo 1 dia
+
+        double valor = dias * PRECO_FIXO_POR_DIA;
+
+        System.out.println("Aluguer devolvido com sucesso:");
+        System.out.println(aluguerAtivo);
+        System.out.printf("Valor a pagar: %.2f€ (%d dias × %.2f€/dia)%n", valor, dias, PRECO_FIXO_POR_DIA);
     }
 }

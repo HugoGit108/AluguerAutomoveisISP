@@ -1,42 +1,53 @@
 package com.isp.aluguerautomoveisisp;
+
 import java.time.LocalDate;
 
-public class Aluguer {
-    private Cliente cliente;
-    private Automovel automovel;
-    private LocalDate dataInicio;
-    private LocalDate dataFim;
+class Aluguer {
+    private String cartaConducaoCliente;
+    private String matriculaVeiculo;
+    private LocalDate inicio;
+    private LocalDate fim;
+    private boolean devolvido;
 
-    public Aluguer(Cliente cliente, Automovel automovel, LocalDate dataInicio, LocalDate dataFim) {
-        this.cliente = cliente;
-        this.automovel = automovel;
-        this.dataInicio = dataInicio;
-        this.dataFim = dataFim;
+    public Aluguer(String cartaConducaoCliente, String matriculaVeiculo, LocalDate inicio, LocalDate fim) {
+        this.cartaConducaoCliente = cartaConducaoCliente;
+        this.matriculaVeiculo = matriculaVeiculo;
+        this.inicio = inicio;
+        this.fim = fim;
+        this.devolvido = false;
     }
 
-    public Cliente getCliente() {
-        return cliente;
+    public String getCartaConducaoCliente() {
+        return cartaConducaoCliente;
     }
 
-    public Automovel getAutomovel() {
-        return automovel;
+    public String getMatriculaVeiculo() {
+        return matriculaVeiculo;
     }
 
-    public LocalDate getDataInicio() {
-        return dataInicio;
+    public LocalDate getInicio() {
+        return inicio;
     }
 
-    public LocalDate getDataFim() {
-        return dataFim;
+    public LocalDate getFim() {
+        return fim;
+    }
+
+    public void setFim(LocalDate fim) {
+        this.fim = fim;
+    }
+
+    public boolean isDevolvido() {
+        return devolvido;
+    }
+
+    public void setDevolvido(boolean devolvido) {
+        this.devolvido = devolvido;
     }
 
     @Override
     public String toString() {
-        return "Aluguer{" +
-                "cliente=" + cliente.getNome() +
-                ", automovel=" + automovel.getMatricula() +
-                ", de=" + dataInicio +
-                ", até=" + dataFim +
-                '}';
+        return String.format("Aluguer: Cliente %s, Veículo %s, De %s até %s, Devolvido: %s",
+                cartaConducaoCliente, matriculaVeiculo, inicio, fim, devolvido ? "Sim" : "Não");
     }
-}
+}1
