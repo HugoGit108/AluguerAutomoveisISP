@@ -1,11 +1,14 @@
 package com.isp.aluguerautomoveisisp;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.time.Month;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -18,7 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
         
-        automoveis.add(new Automovel("AA08AM", "Seat", "Leon", "Preto", 1900, 2000));
+        automoveis.add(new Automovel("AA08AM", "Seat", "Leon", "Preto", 1900, 2001));
         automoveis.add(new Automovel("XQ33QX", "Volkswagen", "Passat", "Preto", 1900, 2000));
         automoveis.add(new Automovel("AA00AA", "Volkswagen", "Golf GTI", "Branco", 2000, 2013));
         automoveis.add(new Automovel("BP89TD", "Nissan", "Pulsar", "Preto", 1200, 2015));
@@ -50,6 +53,9 @@ public class Main {
                     break;
                 case 3:
                     menuAluguer();
+                    break;
+                case 4:
+                    menuEstatisticas();
                     break;
                 case 0:
                     break;
@@ -149,7 +155,41 @@ public class Main {
             }
         } while (opcao != 0);
     }
+    
+    private static void menuEstatisticas() {
+        int opcao;
 
+        do {
+            System.out.println("\n=== Estatísticas ===");
+            System.out.println("1. Carro mais alugado");
+            System.out.println("2. Mês com mais alugueres");
+            System.out.println("3. Cliente com mais alugueres");
+            System.out.println("0. Voltar ao menu principal");
+            System.out.print("Escolha uma opção: ");
+
+            opcao = Integer.parseInt(scanner.nextLine());
+
+
+            switch (opcao) {
+                case 1:
+                    mostrarCarroMaisAlugado(alugueres);
+                    break;
+                case 2:
+                    mostrarMesComMaisAlugueres(alugueres);
+                    break;
+                case 3:
+                    mostrarClienteComMaisAlugueres(alugueres , clientes);
+                    break;
+                case 0:
+                    System.out.println("A regressar ao menu principal...");
+                    break;
+                default:
+                    System.out.println("Opção inválida.");
+            }
+        } while (opcao != 0);
+    }
+
+    
     private static void inserirCliente() {
         System.out.print("Carta de Condução: ");
         String carta = scanner.nextLine().trim();
@@ -244,12 +284,17 @@ public class Main {
         if (clientes.isEmpty()) {
             System.out.println("Não existem clientes registados.");
         } else {
-            System.out.println("===== Lista de Clientes =====");
-            for (Cliente c : clientes) {
+            // Ordenar por nome
+            List<Cliente> clientesOrdenados = new ArrayList<>(clientes);
+            clientesOrdenados.sort(Comparator.comparing(Cliente::getNome, String.CASE_INSENSITIVE_ORDER));
+
+            System.out.println("===== Lista de Clientes (Ordem Alfabética) =====");
+            for (Cliente c : clientesOrdenados) {
                 System.out.println(c);
             }
         }
     }
+
 
     private static void eliminarCliente() {
         System.out.print("Carta de Condução do cliente a eliminar: ");
@@ -342,12 +387,17 @@ public class Main {
         if (automoveis.isEmpty()) {
             System.out.println("Não existem automóveis registados.");
         } else {
-            System.out.println("===== Lista de Automóveis =====");
-            for (Automovel a : automoveis) {
+            // Ordenar por ano (crescente)
+            List<Automovel> automoveisOrdenados = new ArrayList<>(automoveis);
+            automoveisOrdenados.sort(Comparator.comparingInt(a -> a.getAno()));
+
+            System.out.println("===== Lista de Automóveis (Ordenada por Ano) =====");
+            for (Automovel a : automoveisOrdenados) {
                 System.out.println(a);
             }
         }
     }
+
 
     private static void eliminarAutomovel() {
         System.out.print("Matrícula do automóvel a eliminar: ");
@@ -517,68 +567,72 @@ public class Main {
     }
     
     
-/*    public static void mostrarEstatisticas(List<Cliente> clientes, List<Automovel> automoveis, List<Aluguer> alugueres) {
-        // Carro mais alugado
-        Map<Automovel, Long> aluguerPorCarro = alugueres.stream()
-            .collect(Collectors.groupingBy(a -> a.automovel, Collectors.counting()));
+    
+    // ESTATISTICAS 
+    private static void mostrarCarroMaisAlugado(List<Aluguer> alugueres) {
+        if (alugueres.isEmpty()) {
+            System.out.println("Não existem alugueres registados.");
+            return;
+        }
 
-        Automovel carroMaisAlugado = aluguerPorCarro.entrySet().stream()
+        Map<String, Long> contagem = alugueres.stream()
+            .collect(Collectors.groupingBy(Aluguer::getMatriculaVeiculo, Collectors.counting()));
+
+        String maisAlugado = contagem.entrySet().stream()
             .max(Map.Entry.comparingByValue())
-            .map(Map.Entry::getKey)
+            .get()
+            .getKey();
+
+        System.out.println("Carro mais alugado: " + maisAlugado + " (" + contagem.get(maisAlugado) + " alugueres)");
+    }
+    
+    
+    private static void mostrarMesComMaisAlugueres(List<Aluguer> alugueres) {
+        if (alugueres.isEmpty()) {
+            System.out.println("Não existem alugueres registados.");
+            return;
+        }
+
+        Map<Month, Long> contagem = alugueres.stream()
+            .collect(Collectors.groupingBy(a -> a.getInicio().getMonth(), Collectors.counting()));
+
+        Month mesMaisFrequente = contagem.entrySet().stream()
+            .max(Map.Entry.comparingByValue())
+            .get()
+            .getKey();
+
+        System.out.println("Mês com mais alugueres: " + mesMaisFrequente + " (" + contagem.get(mesMaisFrequente) + " alugueres)");
+    }
+    
+    private static void mostrarClienteComMaisAlugueres(List<Aluguer> alugueres, List<Cliente> clientes) {
+        if (alugueres.isEmpty()) {
+            System.out.println("Não existem alugueres registados.");
+            return;
+        }
+
+        Map<String, Long> contagem = alugueres.stream()
+            .collect(Collectors.groupingBy(Aluguer::getCartaConducaoCliente, Collectors.counting()));
+
+        String clienteTop = contagem.entrySet().stream()
+            .max(Map.Entry.comparingByValue())
+            .get()
+            .getKey();
+
+        // Encontrar o cliente pelo número da carta de condução
+        Cliente cliente = clientes.stream()
+            .filter(c -> c.getCartaConducao().equals(clienteTop))
+            .findFirst()
             .orElse(null);
 
-        // Mês com mais alugueres
-        Map<Month, Long> alugueresPorMes = alugueres.stream()
-            .collect(Collectors.groupingBy(a -> a.data.getMonth(), Collectors.counting()));
-
-        Month mesMaisAlugado = alugueresPorMes.entrySet().stream()
-            .max(Map.Entry.comparingByValue())
-            .map(Map.Entry::getKey)
-            .orElse(null);
-
-        // Cliente com mais alugueres
-        Map<Cliente, Long> aluguerPorCliente = alugueres.stream()
-            .collect(Collectors.groupingBy(a -> a.cliente, Collectors.counting()));
-
-        Cliente clienteMaisAlugou = aluguerPorCliente.entrySet().stream()
-            .max(Map.Entry.comparingByValue())
-            .map(Map.Entry::getKey)
-            .orElse(null);
-
-        // Ordenar clientes por ordem alfabética
-        List<Cliente> clientesOrdenados = new ArrayList<>(clientes);
-        clientesOrdenados.sort(Comparator.comparing(Cliente::getNome));
-
-        // Ordenar automóveis por ano (do mais recente para o mais antigo)
-        List<Automovel> automoveisOrdenados = new ArrayList<>(automoveis);
-        automoveisOrdenados.sort(Comparator.comparing(Automovel::getAno).reversed());
-
-        // Impressão dos resultados
-        System.out.println("=== Estatísticas ===");
-
-        if (carroMaisAlugado != null) {
-            System.out.println("Carro mais alugado: " + carroMaisAlugado.getDescricao());
-        }
-
-        if (mesMaisAlugado != null) {
-            System.out.println("Mês com mais alugueres: " + mesMaisAlugado);
-        }
-
-        if (clienteMaisAlugou != null) {
-            System.out.println("Cliente que mais alugou: " + clienteMaisAlugou.getNome());
-        }
-
-        System.out.println("\nClientes por ordem alfabética:");
-        for (Cliente c : clientesOrdenados) {
-            System.out.println("- " + c.getNome());
-        }
-
-        System.out.println("\nAutomóveis ordenados por ano:");
-        for (Automovel a : automoveisOrdenados) {
-            System.out.println("- " + a.getDescricao() + " (" + a.getAno() + ")");
+        if (cliente != null) {
+            System.out.println("Cliente com mais alugueres: " + cliente.getNome() + " (" + clienteTop + ") - " + contagem.get(clienteTop) + " alugueres");
+        } else {
+            // Caso não encontre o cliente (por segurança)
+            System.out.println("Cliente com mais alugueres: " + clienteTop + " (" + contagem.get(clienteTop) + " alugueres)");
         }
     }
-*/
+
     
+     
 
 }
